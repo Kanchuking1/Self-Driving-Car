@@ -47,9 +47,9 @@ function getRGBA(value){
     return "rgba("+R+","+G+","+B+","+alpha+")";
 }
 
-function getTopNBrains(cars, N) {
+function getTopNBrains(cars, N, traffic) {
     cars.sort(function(a, b) {
-        return a.y - b.y ;
+        return a.evaluate(traffic) - b.evaluate(traffic) ;
     });
     return cars.slice(0, N);
 }

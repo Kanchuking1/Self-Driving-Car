@@ -12,10 +12,12 @@ class Car{
         this.angle=0;
         this.damaged=false;
 
+        this.overTaken = 0;
+
         this.useBrain = controlType == "AI";
 
         if (controlType != "DUMMY"){
-            this.sensor=new Sensor(this, 7, 100);
+            this.sensor=new Sensor(this, 13, 150, Math.PI);
             this.brain = new NeuralNetwork(
                 [this.sensor.rayCount, 6, 4]
             );
@@ -119,6 +121,22 @@ class Car{
 
         this.x-=Math.sin(this.angle)*this.speed;
         this.y-=Math.cos(this.angle)*this.speed;
+    }
+
+    evaluate(traffic) {
+        const distanceMul = 0.3;
+        const overTakenMul = 0.7;
+        this.overTaken = 0;
+        this.maxY = 0;
+        
+        for (let i = 0; i < traffic.length; i++){
+            if (traffic[i].y > this.y) {
+                this.overTaken++;
+            }
+            this.maxY = Math.min(this.maxY, traffic[i].y);
+        }
+
+        return -(distanceMul * this.y / this.maxY  + overTakenMul * this.overTaken / traffic.length) * (this.damaged)?0.6:1.0;
     }
 
     draw(ctx, color, drawSensor){

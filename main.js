@@ -9,9 +9,9 @@ const networkCtx = networkCanvas.getContext("2d");
 
 const road = new Road(carCanvas.width/2, carCanvas.width * 0.9);
 
-const N=1;
-const parentRatio=0.05;
-const childrenRatio=0.05;
+const N=100;
+const parentRatio=0.5;
+const childrenRatio=0.5;
 const trafficCount = 20;5
 const trafficDensityPer100 = 1;
 const maxTrafficSpeed = 2.5;
@@ -68,8 +68,7 @@ for (let i = 0; i < trafficCount; i ++) {
 animate();
 
 function save(){
-    const topBrains = getTopNBrains(cars, Math.floor(N * parentRatio)).map(c => c.brain);
-
+    const topBrains = getTopNBrains(cars, Math.floor(N * parentRatio), traffic).map(c => c.brain);
     localStorage.setItem("bestBrain",
         JSON.stringify(topBrains[0]));
     localStorage.setItem("topNBrains",

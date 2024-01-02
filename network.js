@@ -29,6 +29,23 @@ class NeuralNetwork{
         });
     }
 
+    static crossover(network1, network2, crossProb) {
+        const levelCount = network1.levels.length;
+        for (let i = 0; i < levelCount; i++) {
+            const x = Math.random();
+            if (crossProb > x) {
+                for(let j=0;j< network1.levels[i].biases.length;j++){
+                    [network1.levels[i].biases[j], network2.levels[i].biases[j]] = [network2.levels[i].biases[j], network1.levels[i].biases[j]]
+                }
+                for(let j=0;j<network1.levels[i].weights.length;j++){
+                    for(let k=0;k<network1.levels[i].weights[j].length;k++){
+                        [network1.levels[i].weights[j][k], network2.levels[i].weights[j][k]] = [network2.levels[i].weights[j][k], network1.levels[i].weights[j][k]]
+                    }
+                }
+            }
+        }
+    }
+
     static feedForward(givenInputs,network){
         let outputs=Level.feedForward(
             givenInputs,network.levels[0]);

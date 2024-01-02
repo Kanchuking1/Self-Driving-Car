@@ -46,3 +46,10 @@ function getRGBA(value){
     const B=value>0?0:255;
     return "rgba("+R+","+G+","+B+","+alpha+")";
 }
+
+function getTopNBrains(cars, N) {
+    cars.sort(function(a, b) {
+        return a.y - b.y ;
+    });
+    return cars.slice(0, N);
+}

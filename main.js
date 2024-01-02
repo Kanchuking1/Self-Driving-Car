@@ -9,16 +9,41 @@ const networkCtx = networkCanvas.getContext("2d");
 
 const road = new Road(carCanvas.width/2, carCanvas.width * 0.9);
 
-const N=100;
-const trafficCount = 20;
+const N=1;
+const parentRatio=0.05;
+const childrenRatio=0.05;
+const trafficCount = 20;5
 const trafficDensityPer100 = 1;
 const maxTrafficSpeed = 2.5;
-const mutationFactor = 0.2;
+const mutatedRatio = 0.2;
+const mutationFactor = 0.1;
+const crossoverProbability = 0.5;
 
 const cars=generateCars(N);
 
+let generatedChildren = 0;
+
+if (localStorage.getItem("topNBrains")) {
+    const selectedBrains = JSON.parse(
+        localStorage.getItem("topNBrains"));
+    // Random crossover among the selected cars
+    const numberOfChildren = Math.floor(childrenRatio * N);
+    const numberOfSelectedBrains = selectedBrains.length;
+    while(numberOfChildren > generatedChildren) {
+        const i = Math.floor(Math.random() * numberOfSelectedBrains);
+        const j = Math.floor(Math.random() * numberOfSelectedBrains);
+        cars[generatedChildren].brain = JSON.parse(JSON.stringify(selectedBrains[i]));
+        cars[generatedChildren + 1].brain = JSON.parse(JSON.stringify(selectedBrains[j]));
+        if (i != j)
+            NeuralNetwork.crossover(cars[generatedChildren].brain, cars[generatedChildren + 1].brain, crossoverProbability);
+        generatedChildren += 2;
+    }
+
+    generatedChildren = numberOfChildren;
+}
+
 if(localStorage.getItem("bestBrain")){
-    for(let i=0;i<cars.length;i++){
+    for(let i=generatedChildren;i<cars.length;i++){
         cars[i].brain=JSON.parse(
             localStorage.getItem("bestBrain"));
         if(i!=0){
@@ -43,12 +68,17 @@ for (let i = 0; i < trafficCount; i ++) {
 animate();
 
 function save(){
+    const topBrains = getTopNBrains(cars, Math.floor(N * parentRatio)).map(c => c.brain);
+
     localStorage.setItem("bestBrain",
-        JSON.stringify(bestCar.brain));
+        JSON.stringify(topBrains[0]));
+    localStorage.setItem("topNBrains",
+        JSON.stringify(topBrains));
 }
 
 function discard(){
     localStorage.removeItem("bestBrain");
+    localStorage.removeItem("topNBrains");
 }
 
 function generateCars(N){

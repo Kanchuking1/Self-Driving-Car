@@ -15,7 +15,7 @@ class Car{
         this.useBrain = controlType == "AI";
 
         if (controlType != "DUMMY"){
-            this.sensor=new Sensor(this);
+            this.sensor=new Sensor(this, 7);
             this.brain = new NeuralNetwork(
                 [this.sensor.rayCount, 6, 4]
             );
@@ -35,7 +35,7 @@ class Car{
                 s => s == null? 0: 1 - s.offset
             );
             const outputs=NeuralNetwork.feedForward(offsets, this.brain);
-            
+
             if (this.useBrain) {
                 this.controls.forward = outputs[0];
                 this.controls.left = outputs[1];
@@ -121,7 +121,7 @@ class Car{
         this.y-=Math.cos(this.angle)*this.speed;
     }
 
-    draw(ctx, color){
+    draw(ctx, color, drawSensor){
         if(this.damaged){
             ctx.fillStyle="gray";
         }else{
@@ -134,6 +134,6 @@ class Car{
         }
         ctx.fill();
 
-        this.sensor?.draw(ctx);
+        drawSensor && this.sensor?.draw(ctx);
     }
 }

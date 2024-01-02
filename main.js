@@ -10,7 +10,7 @@ const networkCtx = networkCanvas.getContext("2d");
 const road = new Road(carCanvas.width/2, carCanvas.width * 0.9);
 
 const N=100;
-const trafficCount = 10;
+const trafficCount = 20;
 const trafficDensityPer100 = 1;
 const maxTrafficSpeed = 2.5;
 const mutationFactor = 0.2;

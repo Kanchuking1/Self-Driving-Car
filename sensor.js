@@ -78,6 +78,22 @@ class Sensor {
         }
     }
 
+    evaluate () {
+        if (this.readings.length < 1) {
+            return 0;
+        }
+        if (this.readings.length < 2) {
+            return 1 / this.readings[0].offset + 0.00001
+        } 
+        return 1 / (this.readings.map(a => a?.offset || 0).reduce((a, b) => {
+            if (b) {
+                return a + b
+            } else {
+                return a;
+            }
+        }) + 0.00001);
+    }
+
     draw(ctx){
         for(let i=0;i<this.rayCount;i++){
             let end=this.rays[i][1];

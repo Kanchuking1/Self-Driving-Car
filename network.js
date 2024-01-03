@@ -13,7 +13,7 @@ class NeuralNetwork{
             for(let i=0;i<level.biases.length;i++){
                 level.biases[i]=lerp(
                     level.biases[i],
-                    Math.random()*2-1,
+                    random()*2-1,
                     amount
                 )
             }
@@ -21,7 +21,7 @@ class NeuralNetwork{
                 for(let j=0;j<level.weights[i].length;j++){
                     level.weights[i][j]=lerp(
                         level.weights[i][j],
-                        Math.random()*2-1,
+                        random()*2-1,
                         amount
                     )
                 }
@@ -32,7 +32,7 @@ class NeuralNetwork{
     static crossover(network1, network2, crossProb) {
         const levelCount = network1.levels.length;
         for (let i = 0; i < levelCount; i++) {
-            const x = Math.random();
+            const x = random();
             if (crossProb > x) {
                 for(let j=0;j< network1.levels[i].biases.length;j++){
                     [network1.levels[i].biases[j], network2.levels[i].biases[j]] = [network2.levels[i].biases[j], network1.levels[i].biases[j]]
@@ -74,12 +74,12 @@ class Level{
     static #randomize(level){
         for(let i=0;i<level.inputs.length;i++){
             for(let j=0;j<level.outputs.length;j++){
-                level.weights[i][j]=Math.random()*2-1;
+                level.weights[i][j]=random()*2-1;
             }
         }
 
         for(let i=0;i<level.biases.length;i++){
-            level.biases[i]=Math.random()*2-1;
+            level.biases[i]=random()*2-1;
         }
     }
 

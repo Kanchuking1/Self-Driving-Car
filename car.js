@@ -68,7 +68,7 @@ class Car{
             y:this.y-Math.cos(Math.PI+this.angle+alpha)*rad
         });
         return points;
-    } 
+    }
 
     #assessDamage(roadBorders, traffic){
         for(let i=0;i<roadBorders.length;i++){
@@ -125,18 +125,24 @@ class Car{
 
     evaluate(traffic) {
         const distanceMul = 0.3;
-        const overTakenMul = 0.7;
+        const overTakenMul = 0.5;
+        const sensorReadingMul = 0.2;
         this.overTaken = 0;
         this.maxY = 0;
-        
+
         for (let i = 0; i < traffic.length; i++){
             if (traffic[i].y > this.y) {
                 this.overTaken++;
             }
             this.maxY = Math.min(this.maxY, traffic[i].y);
         }
+        const distanceValuation = distanceMul * this.y / this.maxY;
+        const overtakeValuation = overTakenMul * this.overTaken / traffic.length;
+        const sensorReadingValuation = sensorReadingMul * this.sensor.evaluate();
+        const carFitness = distanceValuation + overtakeValuation + sensorReadingValuation;
+        console.log(distanceValuation, overtakeValuation, sensorReadingValuation, carFitness);
 
-        return -(distanceMul * this.y / this.maxY  + overTakenMul * this.overTaken / traffic.length) * (this.damaged)?0.6:1.0;
+        return -(carFitness);
     }
 
     draw(ctx, color, drawSensor){

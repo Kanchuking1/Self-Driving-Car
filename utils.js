@@ -48,8 +48,17 @@ function getRGBA(value){
 }
 
 function getTopNBrains(cars, N, traffic) {
+    if (cars.length > 0) {
+        cars[0].evaluate(traffic);
+    }
     cars.sort(function(a, b) {
         return a.evaluate(traffic) - b.evaluate(traffic) ;
     });
     return cars.slice(0, N);
+}
+
+var seed = 1;
+function random() {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
 }

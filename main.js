@@ -9,17 +9,20 @@ const networkCtx = networkCanvas.getContext("2d");
 
 const road = new Road(carCanvas.width/2, carCanvas.width * 0.9);
 
-const N=100;
-const parentRatio=0.5;
-const childrenRatio=0.5;
-const trafficCount = 20;5
+const N=0;
+const parentRatio=0.1;
+const progenyMethod="RANDOM"
+const childrenRatio=1.0;
+const trafficCount = 20;
 const trafficDensityPer100 = 1;
 const maxTrafficSpeed = 2.5;
-const mutatedRatio = 0.2;
+const mutatedRatio = 0.5;
 const mutationFactor = 0.1;
 const crossoverProbability = 0.5;
 
 const cars=generateCars(N);
+
+cars.push(new Car(road.getLaneCenter(1),100,30,50,"KEYS"));
 
 let generatedChildren = 0;
 
@@ -29,25 +32,28 @@ if (localStorage.getItem("topNBrains")) {
     // Random crossover among the selected cars
     const numberOfChildren = Math.floor(childrenRatio * N);
     const numberOfSelectedBrains = selectedBrains.length;
-    while(numberOfChildren > generatedChildren) {
-        const i = Math.floor(Math.random() * numberOfSelectedBrains);
-        const j = Math.floor(Math.random() * numberOfSelectedBrains);
-        cars[generatedChildren].brain = JSON.parse(JSON.stringify(selectedBrains[i]));
-        cars[generatedChildren + 1].brain = JSON.parse(JSON.stringify(selectedBrains[j]));
-        if (i != j)
-            NeuralNetwork.crossover(cars[generatedChildren].brain, cars[generatedChildren + 1].brain, crossoverProbability);
-        generatedChildren += 2;
+    if (numberOfSelectedBrains > 0) {
+        switch(progenyMethod) {
+            case "LINEAR":
+                linearProgenation(selectedBrains, numberOfChildren, generatedChildren, numberOfSelectedBrains);
+                break;
+            case "RANDOM":
+            default:
+                randomProgenetion(selectedBrains, numberOfChildren, generatedChildren, numberOfSelectedBrains);
+        }
     }
 
     generatedChildren = numberOfChildren;
 }
 
 if(localStorage.getItem("bestBrain")){
-    for(let i=generatedChildren;i<cars.length;i++){
-        cars[i].brain=JSON.parse(
-            localStorage.getItem("bestBrain"));
-        if(i!=0){
-            NeuralNetwork.mutate(cars[i].brain,mutationFactor);
+    const storedBestBrain = localStorage.getItem("bestBrain");
+    if (storedBestBrain != "undefined") {
+        for(let i=generatedChildren;i<cars.length;i++){
+            cars[i].brain=JSON.parse(storedBestBrain);
+            if(i!=0){
+                NeuralNetwork.mutate(cars[i].brain,mutationFactor);
+            }
         }
     }
 }
@@ -56,12 +62,12 @@ const traffic=[];
 
 for (let i = 0; i < trafficCount; i ++) {
     const newCar = new Car(
-        road.getLaneCenter(Math.floor(Math.random() * 3 + 1) - 1),
-        Math.random() * (-((trafficCount / trafficDensityPer100) * 100)),
+        road.getLaneCenter(Math.floor(random() * 3 + 1) - 1),
+        random() * (-((trafficCount / trafficDensityPer100) * 100)),
         30,
         50,
         "DUMMY",
-        ((Math.random() + 1) * 0.5) * maxTrafficSpeed);
+        ((random() + 1) * 0.5) * maxTrafficSpeed);
     traffic.push(newCar);
 }
 
